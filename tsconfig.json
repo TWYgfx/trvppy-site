@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    /* ---- JS/TS target & libs ---- */
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+
+    /* ---- Module / bundler ---- */
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+
+    /* ---- Type checking / emit ---- */
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "incremental": true,
+
+    /* ---- Paths / Aliases ---- */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
+
+    /* ---- Where to find custom .d.ts ---- */
+    "typeRoots": ["./types", "./node_modules/@types"],
+
+    /* optional, but useful when mixing JS */
+    "allowJs": true
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

@@ -11,6 +11,7 @@
     "test:shopify": "node --env-file=.env.local testShopify.js"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.5.0",
     "next": "14.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0"

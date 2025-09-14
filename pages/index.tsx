@@ -3,23 +3,17 @@ import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import SiteHeader from "../components/SiteHeader";
+import ResilientVideo from "../components/ResilientVideo";
 
 /* ================== SITE BACKGROUND (looping video) ================== */
 function SiteBackground() {
   return (
     <div aria-hidden className="fixed inset-0 -z-10">
-      <video
-        className="bgvid h-full w-full object-cover"
-        autoPlay
-        loop
-        muted
-        playsInline
+      <ResilientVideo
+        src="https://cdn.shopify.com/videos/c/o/v/3f7b18f1efac45968db75f10d284ac1b.mp4"
         poster="/mockups/res.png"
-        preload="auto"
-      >
-        {/* filename has a space -> URL-encode it */}
-        <source src="/mockups/res%20ani.mp4" type="video/mp4" />
-      </video>
+        className="bgvid h-full w-full object-cover"
+      />
       <div className="absolute inset-0 bg-black/45 pointer-events-none" />
     </div>
   );

@@ -13,15 +13,14 @@ import {
 } from "../../lib/products";
 import { useCart } from "../../context/CartContext";
 import SiteHeader from "../../components/SiteHeader";
+import ResilientVideo from "../../components/ResilientVideo";
 import { Analytics } from "../../lib/analytics";
 
 /* ========= Background video ========= */
 function SiteBackground() {
   return (
     <div aria-hidden className="fixed inset-0 -z-10">
-      <video className="bgvid h-full w-full object-cover" autoPlay loop muted playsInline preload="auto" poster="/mockups/res.png">
-        <source src="/mockups/res%20ani.mp4" type="video/mp4" />
-      </video>
+  <ResilientVideo src="https://cdn.shopify.com/videos/c/o/v/3f7b18f1efac45968db75f10d284ac1b.mp4" poster="/mockups/res.png" className="bgvid h-full w-full object-cover" />
       <div className="absolute inset-0 bg-black/45 pointer-events-none" />
     </div>
   );

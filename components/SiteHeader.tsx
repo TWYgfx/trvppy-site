@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { CartButton } from "./CartDrawer";
 import PlayerControls from "./PlayerControls";
+import ResilientVideo from "./ResilientVideo";
 
 export default function SiteHeader() {
   return (
@@ -16,14 +17,11 @@ export default function SiteHeader() {
         items-center gap-2
       "
     >
-     <video
-  src="/mockups/TWY3.mp4"
-  autoPlay
-  loop
-  muted
-  playsInline
-  className="hidden sm:block h-10 sm:h-12 md:h-16 max-w-full w-auto object-contain"
-/>
+     <ResilientVideo
+        src="https://cdn.shopify.com/videos/c/o/v/6d2d8dc1dfd34e8c8538954a5bb8f65d.mp4"
+        poster="/mockups/trvppy-logo.png"
+        className="hidden sm:block h-10 sm:h-12 md:h-16 max-w-full w-auto object-contain"
+      />
 
       {/* Center: brand */}
       <div className="justify-self-center">

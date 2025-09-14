@@ -1,25 +1,29 @@
-// components/SiteBackground.tsx
 export default function SiteBackground() {
   const src = process.env.NEXT_PUBLIC_BG_VIDEO;
 
   return (
-    <div aria-hidden className="fixed inset-0 z-0">
+    <div
+      id="bg-root"
+      className="fixed inset-0 pointer-events-none"
+      style={{ zIndex: 0 }}           // sits behind your content
+      aria-hidden
+    >
       <video
-        className="h-full w-full object-cover"
+        id="bg-video"
+        className="absolute inset-0 h-full w-full object-cover"
         autoPlay
         loop
         muted
         playsInline
         preload="auto"
-        crossOrigin="anonymous"
-        // controls // <- uncomment while testing if you want
+        // controls                      // <- uncomment while testing
         onError={(e) => console.error("Background video error", e)}
       >
         {src && <source src={src} type="video/mp4" />}
       </video>
 
-      {/* optional dimmer overlay (keep it if you want the dark vibe) */}
-      <div className="absolute inset-0 bg-black/45 pointer-events-none" />
+      {/* dimmer so UI stays readable; change to /30 or remove if too dark */}
+      <div className="absolute inset-0 bg-black/45" />
     </div>
   );
 }

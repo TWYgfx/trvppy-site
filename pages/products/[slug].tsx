@@ -212,6 +212,7 @@ export default function ProductPage({ product }: Props) {
     <>
       <Head>
         <title>{product.name} — TRVPPY</title>
+        <meta name="trvppy-site-marker" content="trvppy-1" />
         <meta name="description" content={product.description} />
         <meta property="og:type" content="product" />
         <meta property="og:title" content={`${product.name} — TRVPPY`} />

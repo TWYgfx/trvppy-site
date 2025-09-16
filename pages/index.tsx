@@ -123,6 +123,7 @@ export default function Home() {
     <>
       <Head>
         <title>TRVPPY DROP 001 — Twisted Reality</title>
+        <meta name="trvppy-site-marker" content="trvppy-1" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 

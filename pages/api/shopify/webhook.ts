@@ -131,7 +131,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
         console.log('[webhook] internal fetch result', { url, status, ok: r.ok, contentType, snippet });
 
-        const looksLikeHtml = r.ok && contentType && contentType.includes('text/html') && snippet && (snippet.includes('<title') || snippet.toLowerCase().includes('trvpp'));
+  // Prefer the explicit site marker for deterministic detection
+  const looksLikeHtml = r.ok && contentType && contentType.includes('text/html') && snippet && (snippet.includes('name="trvppy-site-marker"') || snippet.includes('<title') || snippet.toLowerCase().includes('trvpp'));
         if (!looksLikeHtml) {
           console.warn('[webhook] Skipping revalidate for', path, 'because fetched response does not look like healthy HTML', { status, contentType, snippetHead: snippet ? snippet.slice(0, 120) : null });
         } else {

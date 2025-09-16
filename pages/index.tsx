@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import SiteHeader from "../components/SiteHeader";
 import ResilientVideo from "../components/ResilientVideo";
 import Image from "next/image";
+import { PRODUCTS } from "../lib/products";
 
 /* ================== SITE BACKGROUND (looping video) ================== */
 function SiteBackground() {
@@ -112,6 +113,12 @@ export default function Home() {
     "/mockups/flawda.png",
   ];
 
+  // Find product data by slug for price lookup
+  const twistedLoveBlack = PRODUCTS.find(p => p.slug === "twisted-love-black");
+  const twistedLoveWhite = PRODUCTS.find(p => p.slug === "twisted-love-white");
+  const uziYachtyBlack = PRODUCTS.find(p => p.slug === "uzi-yachty-black");
+  const uziYachtyWhite = PRODUCTS.find(p => p.slug === "uzi-yachty-white");
+
   return (
     <>
       <Head>
@@ -164,7 +171,8 @@ export default function Home() {
                   />
                 </div>
                 <p className="mt-3 text-xs sm:text-sm font-semibold">
-                  Twisted Love Tee (Black)<br />$55
+                  Twisted Love Tee (Black)<br />
+                  {twistedLoveBlack ? `$${twistedLoveBlack.price}` : "$--"}
                 </p>
               </Link>
 
@@ -194,7 +202,8 @@ export default function Home() {
                   />
                 </div>
                 <p className="mt-3 text-xs sm:text-sm font-semibold">
-                  Twisted Love Tee (White)<br />$55
+                  Twisted Love Tee (White)<br />
+                  {twistedLoveWhite ? `$${twistedLoveWhite.price}` : "$--"}
                 </p>
               </Link>
 
@@ -215,7 +224,8 @@ export default function Home() {
                   />
                 </div>
                 <p className="mt-3 text-xs sm:text-sm font-semibold">
-                  UZI × YACHTY Tee (Black)<br />$45
+                  UZI × YACHTY Tee (Black)<br />
+                  {uziYachtyBlack ? `$${uziYachtyBlack.price}` : "$--"}
                 </p>
               </Link>
 
@@ -236,7 +246,8 @@ export default function Home() {
                   />
                 </div>
                 <p className="mt-3 text-xs sm:text-sm font-semibold">
-                  UZI × YACHTY Tee (White)<br />$45
+                  UZI × YACHTY Tee (White)<br />
+                  {uziYachtyWhite ? `$${uziYachtyWhite.price}` : "$--"}
                 </p>
               </Link>
 

@@ -7,10 +7,20 @@ import { useCart } from "../context/CartContext";
 import { Analytics } from "../lib/analytics";
 
 // Public Storefront envs
-const SHOP_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN!;
-const STOREFRONT_TOKEN = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN!;
+// NOTE: allow the environment variable to be set either as just the domain
+// (example: `myshop.myshopify.com`) or include protocol; normalize to avoid
+// building `https://https://...` which causes network failures.
+const RAW_SHOP_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN || "";
+const SHOP_DOMAIN = RAW_SHOP_DOMAIN.replace(/^https?:\/\//i, "").replace(/\/$/, "");
+const STOREFRONT_TOKEN = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_TOKEN || "";
 const API_VERSION = "2024-10";
 const ENDPOINT = `https://${SHOP_DOMAIN}/api/${API_VERSION}/graphql.json`;
+if (typeof window !== "undefined") {
+  // Helpful debug print in browser console when running locally or in preview
+  // so you can see the exact endpoint being used.
+  // eslint-disable-next-line no-console
+  console.debug("[Shopify] GraphQL endpoint:", ENDPOINT);
+}
 
 type GQLUserError = { field: string[] | null; message: string };
 

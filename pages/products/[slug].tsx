@@ -14,13 +14,14 @@ import {
 import { useCart } from "../../context/CartContext";
 import SiteHeader from "../../components/SiteHeader";
 import ResilientVideo from "../../components/ResilientVideo";
+import Image from "next/image";
 import { Analytics } from "../../lib/analytics";
 
 /* ========= Background video ========= */
 function SiteBackground() {
   return (
     <div aria-hidden className="fixed inset-0 -z-10">
-  <ResilientVideo src="https://cdn.shopify.com/videos/c/o/v/3f7b18f1efac45968db75f10d284ac1b.mp4" poster="/mockups/res.png" className="bgvid h-full w-full object-cover" />
+  <ResilientVideo src="https://cdn.shopify.com/videos/c/o/v/3f7b18f1efac45968db75f10d284ac1b.mp4" poster="/mockups/res.png" className="bgvid h-full w-full object-cover" deferLoad />
       <div className="absolute inset-0 bg-black/45 pointer-events-none" />
     </div>
   );
@@ -247,10 +248,14 @@ export default function ProductPage({ product }: Props) {
             {/* LEFT: Big product image */}
             <div className="relative">
               <div className="relative w-full bg-white rounded-3xl overflow-hidden aspect-[4/5] shadow-2xl">
-                <img
+                <Image
                   src={face === "front" ? viewImages.front : (viewImages.back || viewImages.front)}
                   alt={product.name}
-                  className="absolute inset-0 h-full w-full object-contain"
+                  loading="lazy"
+                  decoding="async"
+                  fill
+                  sizes="(min-width:1024px) 50vw, 90vw"
+                  className="object-contain"
                 />
               </div>
               {hasBack && (
@@ -266,12 +271,7 @@ export default function ProductPage({ product }: Props) {
               <h1 className="text-3xl md:text-5xl font-bold tracking-tight uppercase">{product.name}</h1>
               <div className="mt-3 text-lg md:text-xl font-semibold">{priceFmt}</div>
 
-              {/* Preorder badge */}
-              {catalogEntry?.preorder && (
-                <div className="mt-2 text-sm text-yellow-300">
-                  Pre-order — {catalogEntry.shipEstimate || "ships soon"}
-                </div>
-              )}
+              {/* Preorder badge removed */}
 
               {/* Bullet list */}
               <ul className="mt-6 space-y-2 text-white/90">
@@ -379,11 +379,11 @@ export default function ProductPage({ product }: Props) {
                           <div className="relative w-full overflow-hidden rounded-2xl bg-white aspect-[4/5]">
                             {preview.back ? (
                               <>
-                                <img src={preview.back} alt={`${b} back`} className="absolute inset-0 h-full w-full object-contain transition-opacity duration-300 group-hover:opacity-0" />
-                                <img src={preview.front} alt={`${b} front`} className="absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                                <Image src={preview.back} alt={`${b} back`} loading="lazy" decoding="async" fill sizes="(min-width:1024px) 220px, 45vw" className="object-contain transition-opacity duration-300 group-hover:opacity-0" />
+                                <Image src={preview.front} alt={`${b} front`} loading="lazy" decoding="async" fill sizes="(min-width:1024px) 220px, 45vw" className="object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                               </>
                             ) : (
-                              <img src={preview.front} alt={`${b} front`} className="absolute inset-0 h-full w-full object-contain" />
+                              <Image src={preview.front} alt={`${b} front`} loading="lazy" decoding="async" fill sizes="(min-width:1024px) 220px, 45vw" className="object-contain" />
                             )}
                           </div>
                         </Link>
@@ -441,5 +441,36 @@ export const getStaticProps: GetStaticProps<{ product: Product }> = async ({ par
   const effectiveSlug = CANONICAL_DEFAULT[incoming] || incoming;
   const product = getProductBySlug(effectiveSlug);
   if (!product) return { notFound: true };
+  // If product references Shopify variant IDs, fetch current price for the first known variant
+  try {
+    // find any variant GID from the product data
+    const firstVariantGid = product.shopifyVariants ? Object.values(product.shopifyVariants)[0] : undefined;
+    if (firstVariantGid) {
+      // import shopifyFetch lazily to avoid SSR ordering issues
+      const { shopifyFetch } = await import('../../lib/shopify');
+      const QUERY = /* GraphQL */ `
+        query getVariantPrice($id: ID!) {
+          node(id: $id) {
+            ... on ProductVariant {
+              priceV2 { amount currencyCode }
+            }
+          }
+        }
+      `;
+      try {
+        const data = await shopifyFetch<{ node: { priceV2: { amount: string; currencyCode: string } } }>(QUERY, { id: firstVariantGid });
+        const amount = data?.node?.priceV2?.amount;
+        if (amount) {
+          // override static price
+          product.price = Number(parseFloat(amount));
+        }
+      } catch (err) {
+        console.warn('[getStaticProps] Failed to fetch variant price from Shopify', err);
+      }
+    }
+  } catch (err) {
+    console.warn('[getStaticProps] Error while syncing price', err);
+  }
+
   return { props: { product } };
 };

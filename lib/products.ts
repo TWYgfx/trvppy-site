@@ -25,11 +25,9 @@ export const PRODUCTS: Product[] = [
   /* ---------- Twisted Love — Black ---------- */
   {
     slug: "twisted-love-black",
-    name: "Twisted Love Tee",
-    price: 55,
-    color: "Black",
-    preorder: true,                 // ✅ you can toggle per product
-    shipEstimate: "Ships late Sept",
+  name: "Twisted Love Tee",
+  price: 40,
+  color: "Black",
     images: {
       front: "/mockups/trvppy-black-front.png",
       back: "/mockups/twisted-love-black.png",
@@ -56,11 +54,9 @@ export const PRODUCTS: Product[] = [
   /* ---------- Twisted Love — White ---------- */
   {
     slug: "twisted-love-white",
-    name: "Twisted Love Tee",
-    price: 55,
-    color: "White",
-    preorder: true,                 // ✅
-    shipEstimate: "Ships late Sept",
+  name: "Twisted Love Tee",
+  price: 40,
+  color: "White",
     images: {
       front: "/mockups/trvppy-white-front.png",
       back: "/mockups/twisted-love-white.png",
@@ -87,11 +83,9 @@ export const PRODUCTS: Product[] = [
   /* ---------- UZI × YACHTY — Black ---------- */
   {
     slug: "uzi-yachty-black",
-    name: "UZI × YACHTY Tee",
-    price: 45,
-    color: "Black",
-    preorder: true,                 // ✅
-    shipEstimate: "Ships late Sept",
+  name: "UZI × YACHTY Tee",
+  price: 35,
+  color: "Black",
     images: {
       front: "/mockups/UZI-X-YACHTY-BLK.png",
     },
@@ -113,11 +107,9 @@ export const PRODUCTS: Product[] = [
   /* ---------- UZI × YACHTY — White ---------- */
   {
     slug: "uzi-yachty-white",
-    name: "UZI × YACHTY Tee",
-    price: 45,
-    color: "White",
-    preorder: true,                 // ✅
-    shipEstimate: "Ships late Sept",
+  name: "UZI × YACHTY Tee",
+  price: 35,
+  color: "White",
     images: {
       front: "/mockups/UZI-X-YACHTY-WHITE.png",
     },
@@ -142,4 +134,23 @@ export function getAllProductSlugs() {
 }
 export function getProductBySlug(slug: string) {
   return PRODUCTS.find((p) => p.slug === slug) || null;
+}
+
+/**
+ * Find site slugs that reference a given Shopify variant GID.
+ * This is used by the webhook handler to map incoming Shopify variant/product updates
+ * to the local product pages that should be revalidated.
+ */
+export function findSlugsByVariantGid(variantGid: string) {
+  const matches: string[] = [];
+  for (const p of PRODUCTS) {
+    if (!p.shopifyVariants) continue;
+    for (const v of Object.values(p.shopifyVariants)) {
+      if (String(v) === String(variantGid)) {
+        matches.push(p.slug);
+        break;
+      }
+    }
+  }
+  return matches;
 }

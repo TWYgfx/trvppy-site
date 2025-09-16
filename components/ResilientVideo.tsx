@@ -9,6 +9,8 @@ type Props = {
   muted?: boolean;
   playsInline?: boolean;
   ariaHidden?: boolean;
+  // If true, don't attach the source until the element is visible (saves bandwidth)
+  deferLoad?: boolean;
 };
 
 export default function ResilientVideo({
@@ -20,14 +22,47 @@ export default function ResilientVideo({
   muted = true,
   playsInline = true,
   ariaHidden = true,
+  deferLoad = false,
 }: Props) {
   const [ok, setOk] = useState(true);
+  const [shouldLoad, setShouldLoad] = useState(!deferLoad);
   const ref = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     // Reset when src changes
     setOk(true);
-  }, [src]);
+    setShouldLoad(!deferLoad);
+  }, [src, deferLoad]);
+
+  useEffect(() => {
+    if (!deferLoad || shouldLoad) return;
+    const el = ref.current;
+    if (!el) return;
+
+    // IntersectionObserver to start loading when visible
+    let obs: IntersectionObserver | null = null;
+    try {
+      obs = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShouldLoad(true);
+            obs?.disconnect();
+            obs = null;
+          }
+        });
+      });
+      obs.observe(el);
+    } catch (e) {
+      // Fallback: if IO not supported, load after small delay
+      const id = window.setTimeout(() => setShouldLoad(true), 250);
+      return () => window.clearTimeout(id);
+    }
+
+    return () => {
+      obs?.disconnect();
+      obs = null;
+    };
+  }, [deferLoad, shouldLoad]);
 
   // If the video errors (missing file, blocked, etc), hide it and rely on poster
   const handleError = () => setOk(false);
@@ -49,7 +84,7 @@ export default function ResilientVideo({
           onError={handleError}
           onCanPlayThrough={handleCanPlay}
         >
-          <source src={src} type="video/mp4" />
+          {shouldLoad && <source src={src} type="video/mp4" />}
         </video>
       ) : (
         // Fallback: poster as background image, preserves sizing via className

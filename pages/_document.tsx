@@ -6,6 +6,8 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
+         {/* Preconnect to Shopify CDN for faster video/image handshake */}
+         <link rel="preconnect" href="https://cdn.shopify.com" crossOrigin="" />
          <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}></script>
 <script dangerouslySetInnerHTML={{
   __html: `

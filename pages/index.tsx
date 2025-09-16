@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import SiteHeader from "../components/SiteHeader";
 import ResilientVideo from "../components/ResilientVideo";
+import Image from "next/image";
 
 /* ================== SITE BACKGROUND (looping video) ================== */
 function SiteBackground() {
@@ -13,6 +14,7 @@ function SiteBackground() {
         src="https://cdn.shopify.com/videos/c/o/v/3f7b18f1efac45968db75f10d284ac1b.mp4"
         poster="/mockups/res.png"
         className="bgvid h-full w-full object-cover"
+        deferLoad
       />
       <div className="absolute inset-0 bg-black/45 pointer-events-none" />
     </div>
@@ -60,6 +62,8 @@ function GlitchSlideshow({
       <img
         src={images[idx]}
         alt="TRVPPY art"
+        loading="lazy"
+        decoding="async"
         className={`absolute inset-0 h-full w-full object-contain transition-transform duration-500 ${
           glitch ? "scale-105" : "scale-100"
         }`}
@@ -68,6 +72,8 @@ function GlitchSlideshow({
         src={images[idx]}
         alt=""
         aria-hidden
+        loading="lazy"
+        decoding="async"
         className={`absolute inset-0 h-full w-full object-contain mix-blend-screen ${
           glitch ? "opacity-60" : "opacity-0"
         } transition-opacity duration-150`}
@@ -80,6 +86,8 @@ function GlitchSlideshow({
         src={images[idx]}
         alt=""
         aria-hidden
+        loading="lazy"
+        decoding="async"
         className={`absolute inset-0 h-full w-full object-contain mix-blend-screen ${
           glitch ? "opacity-60" : "opacity-0"
         } transition-opacity duration-150`}
@@ -135,16 +143,24 @@ export default function Home() {
               >
                 <div className="relative w-full aspect-[4/5]">
                   {/* BACK visible by default */}
-                  <img
+                  <Image
                     src="/mockups/twisted-love-black.png"
                     alt="Twisted Love — back (black)"
-                    className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300 group-hover:opacity-0"
+                    loading="lazy"
+                    decoding="async"
+                    fill
+                    sizes="(min-width:1024px) 220px, 45vw"
+                    className="object-contain transition-opacity duration-300 group-hover:opacity-0"
                   />
                   {/* FRONT on hover */}
-                  <img
+                  <Image
                     src="/mockups/trvppy-black-front.png"
                     alt="Twisted Love — front (black)"
-                    className="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    loading="lazy"
+                    decoding="async"
+                    fill
+                    sizes="(min-width:1024px) 220px, 45vw"
+                    className="object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                   />
                 </div>
                 <p className="mt-3 text-xs sm:text-sm font-semibold">
@@ -158,15 +174,23 @@ export default function Home() {
                 className="group block w-full max-w-[220px] sm:max-w-none text-center focus:outline-none focus:ring-2 focus:ring-white/40 rounded-xl cursor-pointer"
               >
                 <div className="relative w-full aspect-[4/5]">
-                  <img
+                  <Image
                     src="/mockups/twisted-love-white.png"
                     alt="Twisted Love — back (white)"
-                    className="absolute inset-0 w-full h-full object-contain transition-opacity duration-300 group-hover:opacity-0"
+                    loading="lazy"
+                    decoding="async"
+                    fill
+                    sizes="(min-width:1024px) 220px, 45vw"
+                    className="object-contain transition-opacity duration-300 group-hover:opacity-0"
                   />
-                  <img
+                  <Image
                     src="/mockups/trvppy-white-front.png"
                     alt="Twisted Love — front (white)"
-                    className="absolute inset-0 w-full h-full object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    loading="lazy"
+                    decoding="async"
+                    fill
+                    sizes="(min-width:1024px) 220px, 45vw"
+                    className="object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                   />
                 </div>
                 <p className="mt-3 text-xs sm:text-sm font-semibold">
@@ -180,10 +204,14 @@ export default function Home() {
                 className="group block w-full max-w-[220px] sm:max-w-none text-center focus:outline-none focus:ring-2 focus:ring-white/40 rounded-xl cursor-pointer"
               >
                 <div className="relative w-full aspect-[4/5]">
-                  <img
+                  <Image
                     src="/mockups/UZI-X-YACHTY-BLK.png"
                     alt="UZI × YACHTY Tee (Black)"
-                    className="absolute inset-0 w-full h-full object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+                    loading="lazy"
+                    decoding="async"
+                    fill
+                    sizes="(min-width:1024px) 220px, 45vw"
+                    className="object-contain transition-transform duration-200 group-hover:scale-[1.02]"
                   />
                 </div>
                 <p className="mt-3 text-xs sm:text-sm font-semibold">
@@ -197,10 +225,14 @@ export default function Home() {
                 className="group block w-full max-w-[220px] sm:max-w-none text-center focus:outline-none focus:ring-2 focus:ring-white/40 rounded-xl cursor-pointer"
               >
                 <div className="relative w-full aspect-[4/5]">
-                  <img
+                  <Image
                     src="/mockups/UZI-X-YACHTY-WHITE.png"
                     alt="UZI × YACHTY Tee (White)"
-                    className="absolute inset-0 w-full h-full object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+                    loading="lazy"
+                    decoding="async"
+                    fill
+                    sizes="(min-width:1024px) 220px, 45vw"
+                    className="object-contain transition-transform duration-200 group-hover:scale-[1.02]"
                   />
                 </div>
                 <p className="mt-3 text-xs sm:text-sm font-semibold">

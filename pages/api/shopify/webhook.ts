@@ -111,19 +111,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.log('[webhook] Revalidating', path);
       // Attempt a direct FETCH to the public URL first and log its response.
       try {
-        const host = (req.headers.host as string) || process.env.VERCEL_URL || 'trvppystudios.vercel.app';
+        // Prefer the actual deployment URL Vercel used when proxying the request.
+        // This avoids hitting the production domain when the webhook was routed to a preview URL.
+        const pref = (req.headers['x-vercel-deployment-url'] as string) || (req.headers['x-vercel-sc-host'] as string);
+        const host = pref || (req.headers.host as string) || process.env.VERCEL_URL || 'trvppystudios.vercel.app';
         const url = `https://${host}${path}`;
         console.log('[webhook] internal fetch to', url);
         const r = await fetch(url, { method: 'GET' });
         const status = r.status;
         let snippet: string | null = null;
+        let contentType: string | null = null;
         try {
+          contentType = r.headers.get('content-type');
           const txt = await r.text();
-          snippet = txt ? txt.slice(0, 1024) : null;
+          snippet = txt ? txt.slice(0, 512) : null;
         } catch (e) {
           snippet = null;
         }
-        console.log('[webhook] internal fetch result', { url, status, ok: r.ok, snippet: snippet ? `${snippet.length} chars` : null });
+        console.log('[webhook] internal fetch result', { url, status, ok: r.ok, contentType, snippet });
       } catch (fetchErr) {
         console.error('[webhook] internal fetch failed', fetchErr);
       }

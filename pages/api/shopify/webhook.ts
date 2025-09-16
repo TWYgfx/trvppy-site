@@ -109,6 +109,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // product pages are under /products/[slug]
       const path = slug === '/' ? '/' : `/products/${slug}`;
       console.log('[webhook] Revalidating', path);
+      // Attempt a direct FETCH to the public URL first and log its response.
+      try {
+        const host = (req.headers.host as string) || process.env.VERCEL_URL || 'trvppystudios.vercel.app';
+        const url = `https://${host}${path}`;
+        console.log('[webhook] internal fetch to', url);
+        const r = await fetch(url, { method: 'GET' });
+        const status = r.status;
+        let snippet: string | null = null;
+        try {
+          const txt = await r.text();
+          snippet = txt ? txt.slice(0, 1024) : null;
+        } catch (e) {
+          snippet = null;
+        }
+        console.log('[webhook] internal fetch result', { url, status, ok: r.ok, snippet: snippet ? `${snippet.length} chars` : null });
+      } catch (fetchErr) {
+        console.error('[webhook] internal fetch failed', fetchErr);
+      }
+
       await res.revalidate(path).catch((err) => console.error('revalidate failed', err));
     }
   } catch (err) {

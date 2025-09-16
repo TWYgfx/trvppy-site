@@ -109,7 +109,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // product pages are under /products/[slug]
       const path = slug === '/' ? '/' : `/products/${slug}`;
       console.log('[webhook] Revalidating', path);
-      // Attempt a direct FETCH to the public URL first and log its response.
+      // Attempt a direct FETCH to the public URL first and inspect its response.
+      // Only call res.revalidate when the fetched resource looks like a healthy HTML page.
       try {
         // Prefer the actual deployment URL Vercel used when proxying the request.
         // This avoids hitting the production domain when the webhook was routed to a preview URL.
@@ -117,7 +118,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const host = pref || (req.headers.host as string) || process.env.VERCEL_URL || 'trvppystudios.vercel.app';
         const url = `https://${host}${path}`;
         console.log('[webhook] internal fetch to', url);
-        const r = await fetch(url, { method: 'GET' });
+        const r = await fetch(url, { method: 'GET', redirect: 'follow' });
         const status = r.status;
         let snippet: string | null = null;
         let contentType: string | null = null;
@@ -129,11 +130,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           snippet = null;
         }
         console.log('[webhook] internal fetch result', { url, status, ok: r.ok, contentType, snippet });
+
+        const looksLikeHtml = r.ok && contentType && contentType.includes('text/html') && snippet && (snippet.includes('<title') || snippet.toLowerCase().includes('trvpp'));
+        if (!looksLikeHtml) {
+          console.warn('[webhook] Skipping revalidate for', path, 'because fetched response does not look like healthy HTML', { status, contentType, snippetHead: snippet ? snippet.slice(0, 120) : null });
+        } else {
+          await res.revalidate(path).catch((err) => console.error('revalidate failed', err));
+        }
       } catch (fetchErr) {
         console.error('[webhook] internal fetch failed', fetchErr);
       }
-
-      await res.revalidate(path).catch((err) => console.error('revalidate failed', err));
     }
   } catch (err) {
     console.error('[webhook] Error during revalidation', err);

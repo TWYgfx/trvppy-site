@@ -10,7 +10,8 @@ type Props = {
   playsInline?: boolean;
   ariaHidden?: boolean;
   // If true, don't attach the source until the element is visible (saves bandwidth)
-  deferLoad?: boolean;
+  deferLoad?: boolean; // Ensure this prop is defined
+  // Additional comment for clarity
 };
 
 export default function ResilientVideo({
